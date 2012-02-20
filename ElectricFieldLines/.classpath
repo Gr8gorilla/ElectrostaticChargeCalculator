@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JOGL">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="E:/xtraJavaLibs/jogl"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="E:/xtraJavaLibs/packages/commons-math-2.2/commons-math-2.2.jar" sourcepath="E:/xtraJavaLibs/packages/commons-math-2.2/commons-math-2.2-sources.jar"/>
+	<classpathentry kind="lib" path="E:/xtraJavaLibs/packages/j3d/lib/ext/j3dcore.jar">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="E:/xtraJavaLibs/packages/j3d/bin"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="E:/xtraJavaLibs/packages/j3d/lib/ext/j3dutils.jar">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="E:/xtraJavaLibs/packages/j3d/bin"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="E:/xtraJavaLibs/packages/j3d/lib/ext/vecmath.jar">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="E:/xtraJavaLibs/packages/j3d/bin"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jzy3d">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="E:/xtraJavaLibs/dependencies"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="E:/xtraJavaLibs/dependencies/org.jzy3d-0.9.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
