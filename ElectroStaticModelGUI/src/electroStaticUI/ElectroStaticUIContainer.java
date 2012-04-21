@@ -1,31 +1,37 @@
 package electroStaticUI;
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
 
-
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 
+import org.jfree.chart.ChartFrame;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
 import org.jzy3d.chart.Chart;
-import org.jzy3d.colors.Color;
 
 
 public class ElectroStaticUIContainer extends JFrame{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	//menu components
 	private JMenuBar menuBar;
 	private JMenu fileMenu;
@@ -34,8 +40,6 @@ public class ElectroStaticUIContainer extends JFrame{
 	private JMenu graphOptions;
 	private JMenu export;
 	private JMenuItem exitItem;
-	private JMenuItem electricFieldLines;
-	private JMenuItem electricPotential;
 	private JMenuItem setGraphRangeAndSteps;
 	private JMenuItem asymptoteReadableFile;
 	private JMenuItem newElectricFieldLines;
@@ -48,7 +52,7 @@ public class ElectroStaticUIContainer extends JFrame{
 	private JMenuItem save;
 	private JMenuItem saveAs;
 	private JPanel container;
-	private static JPanel displayPanel;
+	private static JTabbedPane displayPanel;
 	private JFileChooser fChooser = new JFileChooser();
 	private String saveAsName = "NoSavedFileYet";
 	private File saveAsFile = new File(saveAsName);
@@ -63,6 +67,14 @@ public class ElectroStaticUIContainer extends JFrame{
 	private JTextField currentUpperField;
 	private JTextField currentRangeField;
 	private static Chart chart = new Chart();
+	private static JFreeChart electricFieldChart;
+	private static ChartPanel eFieldDisplay;
+	private double lb;
+	private double ub;
+	private int step;
+	private int safety = 0;
+	private static JPanel voltageChartPanel;
+	
 	//constructor
 	public ElectroStaticUIContainer(){
 		
@@ -81,8 +93,9 @@ public class ElectroStaticUIContainer extends JFrame{
 		//set preferred size
 		setMinimumSize(new Dimension(1200, 900));
 		
+		
 		container = new JPanel(new BorderLayout());
-		displayPanel = new JPanel(new BorderLayout());
+		displayPanel = new JTabbedPane();
 	
 		container.setPreferredSize(new Dimension(1200, 900));
 		displayPanel.setPreferredSize(new Dimension(800,800));
@@ -92,6 +105,58 @@ public class ElectroStaticUIContainer extends JFrame{
 		//pack and display the window
 		getContentPane().add(container);
 		setVisible(true);
+		
+	}
+	
+
+	//method to paint the chart onto the display panel
+	public static void addGraphToDisplayPanel(Chart threeDChart){
+		chart = threeDChart;
+		displayPanel.addTab("Voltage", (Component) threeDChart.getCanvas());                               
+	}
+	
+	public static void addVectorGraphToDisplayPanel(JFreeChart vectorChart){
+		eFieldDisplay = new ChartPanel(vectorChart);
+		displayPanel.addTab("Vector Plot", eFieldDisplay);
+		
+	}
+	
+	public static void setVoltageChartVisible(){
+		voltageChartPanel.setVisible(true);
+	}
+	
+	public static void setVoltageChartInvisible(){
+		voltageChartPanel.setVisible(false);
+	}
+	
+	public static void setVectorPlotVisible(){
+		eFieldDisplay.setVisible(true);
+		
+	}
+	
+	public static void setVectorPlotInvisible(){
+		eFieldDisplay.setVisible(false);
+	}
+	
+	public static void addVectorGraphToDisplayPanel(ChartPanel theVectorPlot){
+		eFieldDisplay = theVectorPlot;
+		displayPanel.add(eFieldDisplay);
+		displayPanel.removeAll();
+		eFieldDisplay.setVisible(true);
+		displayPanel.revalidate();
+		displayPanel.setVisible(true);
+	}
+	
+	
+	public static void removeGraphFromdisplayPanel(){
+		displayPanel.removeAll();
+		displayPanel.revalidate();
+	}
+	
+	public void addPanelToContainer(JPanel panelToAdd, String borderLayout){
+		container.add(panelToAdd, borderLayout);
+		panelToAdd.repaint();
+		container.revalidate();
 	}
 	
 	private void buildMenuBar(){
@@ -167,25 +232,6 @@ public class ElectroStaticUIContainer extends JFrame{
 	
 	private void buildOptionMenu(){
 		
-		//create ElectricFieldLine menu item
-		electricFieldLines = new JMenuItem("Electric Field Lines");
-		electricFieldLines.setMnemonic(KeyEvent.VK_F);
-		electricFieldLines.addActionListener(new OptionMenuListener());
-		
-		//create ElectricPotential menu item
-		electricPotential = new JMenuItem("Electric Potential");
-		electricPotential.setMnemonic(KeyEvent.VK_P);
-		electricPotential.addActionListener(new OptionMenuListener());
-		
-		//asymptote menu item
-		asymptoteReadableFile = new JMenuItem("Asymptote");
-		asymptoteReadableFile.setMnemonic(KeyEvent.VK_A);
-		asymptoteReadableFile.addActionListener(new OptionMenuListener());
-		//make the export menu 
-		export  = new JMenu("Export");
-		export.setMnemonic(KeyEvent.VK_X);
-		export.add(asymptoteReadableFile);
-		
 		//create Dimension menu
 		dimension = new JMenu("Dimension");
 		dimension.setMnemonic(KeyEvent.VK_D);
@@ -222,9 +268,6 @@ public class ElectroStaticUIContainer extends JFrame{
 		
 		//add the items to it
 		optionMenu.add(dimension);
-		optionMenu.add(electricFieldLines);
-		optionMenu.add(electricPotential);
-		optionMenu.add(export);
 		optionMenu.add(graphOptions);
 	}
 	
@@ -241,31 +284,61 @@ private void rangeAndStepsSetter(){
 		JLabel rangeLowerBound = new JLabel("Lower Bound");
 		lowerBoundField = new JTextField(6);
 		lowerBoundField.setEditable(true);
+		lowerBoundField.setText("0");
 		JLabel rangeUpperBound = new JLabel("Upper Bound");
 		upperBoundField = new JTextField(6);
 		upperBoundField.setEditable(true);
+		upperBoundField.setText("0");
 		JLabel rangeLabel = new JLabel("Steps");
 		rangeField = new JTextField(6);
 		rangeField.setEditable(true);
+		rangeField.setText("0");
 		JLabel currentLowerBound = new JLabel("Current Lower Bound");
 		currentLowerField = new JTextField(6);
-		currentLowerField.setText(Double.toString(GraphIt.getLowerBound()));
+		currentLowerField.setText(Double.toString(DefaultValues.getMin()));
 		currentLowerField.setEditable(false);
 		JLabel currentUpperBound = new JLabel("Current Upper Bound");
 		currentUpperField = new JTextField(6);
-		currentUpperField.setText(Double.toString(GraphIt.getUpperBound()));
+		currentUpperField.setText(Double.toString(DefaultValues.getMax()));
 		currentUpperField.setEditable(false);
 		JLabel currentRange = new JLabel("Current Steps");
 		currentRangeField = new JTextField(6);
-		currentRangeField.setText(Integer.toString(GraphIt.getSteps()));
+		currentRangeField.setText(Integer.toString(DefaultValues.getSteps()));
 		currentRangeField.setEditable(false);
 		JButton okButton = new JButton("OK");
 		okButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
-				GraphIt.setGraphRange(Double.parseDouble(lowerBoundField.getText()), Double.parseDouble(upperBoundField.getText()));
-				GraphIt.setGraphSteps(Integer.parseInt(rangeField.getText()));
+				/*
+				 * some safety code so that we can't set the bounds or steps to 0;
+				 */
+				lb = Double.parseDouble(lowerBoundField.getText());
+				ub = Double.parseDouble(upperBoundField.getText());
+				step = Integer.parseInt(rangeField.getText());
+				if((lb == 0) && (ub == 0)){
+					lb = DefaultValues.getMin();
+					ub = DefaultValues.getMax();
+					safety++;
+				}
+				
+				if(step == 0){
+					step = (int) DefaultValues.getSteps();
+					safety++;
+				}
+				/*
+				 * set the values to the user specified ones as long as they are legal
+				 */
+				DefaultValues.setMin(lb);
+				DefaultValues.setMax(ub);
+				DefaultValues.setSteps(step);
 				rangeStepFrame.setVisible(false);
+				lowerBoundField.setText("0");
+				upperBoundField.setText("0");
+				rangeField.setText("0");
 				rangeStepFrame.dispose();
+				if(safety > 0){
+					JOptionPane.showMessageDialog(null, safety + " of your values was/were out of range. \nIt/They were reset to the default values. \nYou may need to re-enter these values!");
+					safety = 0;
+				}
 			}
 		});
 		
@@ -287,27 +360,6 @@ private void rangeAndStepsSetter(){
 		rangeStepFrame.setVisible(true);
 		rangeStepFrame.pack();
 	}
-	
-	//method to paint the chart onto the display panel
-	public static void addGraphToDisplayPanel(Chart chartOfUserData){
-		chart = chartOfUserData;
-		displayPanel.add((JComponent) chart.getCanvas());
-		displayPanel.revalidate();
-	}
-	
-	public static void removeGraphFromdisplayPanel(){
-		displayPanel.removeAll();
-		displayPanel.revalidate();
-	}
-	
-	public void addPanelToContainer(JPanel panelToAdd, String borderLayout){
-		container.add(panelToAdd, borderLayout);
-		panelToAdd.repaint();
-		container.revalidate();
-	}
-	
-	
-	
 	
 	
 	/*
