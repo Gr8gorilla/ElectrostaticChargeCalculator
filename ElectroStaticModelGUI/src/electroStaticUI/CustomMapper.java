@@ -4,6 +4,29 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 
 /*
+ * Copyright 2012 Shaun Sharpton
+ * 
+ * This file is part of "Dr Duncan's Electrostatic Charge modeler"!
+ * 
+ * 
+ *   "Dr Duncan's Electrostatic Charge modeler" is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *   
+ *   "Dr Duncan's Electrostatic Charge modeler" is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *   
+ *   You should have received a copy of the GNU General Public License
+ *   along with "Dr Duncan's Electrostatic Charge modeler".  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+
+
+
+/*
  * Basic Overview of what is going on:
  * This custom mapper class allows me to solve for a charge distribution's electric field and voltage through brute force
  * the elegant solution was too difficult (creating an f(x,y) function for any charge distribution). The brute force method is simple.
@@ -13,6 +36,8 @@ import java.util.ArrayList;
  * of each charge and sum that, storing it in a variable within the field point. Then I simply plot the vectors at each point on a 2d
  * graph and then plot the surface that represents Voltage on a 3d graph and display it.  
  */
+
+
 
 public class CustomMapper {
 	

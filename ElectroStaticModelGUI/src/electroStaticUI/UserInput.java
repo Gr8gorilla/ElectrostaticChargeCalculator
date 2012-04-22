@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
@@ -21,9 +22,27 @@ import org.jzy3d.chart.controllers.mouse.ChartMouseController;
 
 public class UserInput extends JPanel{
 
-	/**
+	/*
+	 * Copyright 2012 Shaun Sharpton
 	 * 
+	 * This file is part of "Dr Duncan's Electrostatic Charge modeler"!
+	 * 
+	 * 
+	 *   "Dr Duncan's Electrostatic Charge modeler" is free software: you can redistribute it and/or modify
+	 *   it under the terms of the GNU General Public License as published by
+	 *   the Free Software Foundation, either version 3 of the License, or
+	 *   (at your option) any later version.
+	 *   
+	 *   "Dr Duncan's Electrostatic Charge modeler" is distributed in the hope that it will be useful,
+	 *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+	 *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	 *   GNU General Public License for more details.
+	 *   
+	 *   You should have received a copy of the GNU General Public License
+	 *   along with "Dr Duncan's Electrostatic Charge modeler".  If not, see <http://www.gnu.org/licenses/>.
 	 */
+	
+	
 	private static final long serialVersionUID = 1L;
 	private JFrame chargeDataFrame;
 	private JLabel charges;
@@ -42,7 +61,7 @@ public class UserInput extends JPanel{
 	private static Chart chart = new Chart("swing");
 	private static JFreeChart electricFieldChart;
 	private int okButtonPushes = 0;
-	private static PointCharge[] chargesToCalc;
+	private PointCharge[] chargesToCalc;
 	private Double chargeValue;
 	private Double xValue;
 	private Double yValue;
@@ -62,8 +81,10 @@ public class UserInput extends JPanel{
 	private String circleRectTT;
 	private String calculatorTT;
 	private JLabel lengthModLabel;
-	private JComboBox lengthModCombo;
+	private JComboBox<String> lengthModCombo;
 	private String[] lengthModList = {"none", "centi", "milli",  "micro", "nano", "pico", "femto"};
+	private JFrame calculatorFrame;
+	private CalculatorPanel theCalculator;
 	//private JTextField zPosition;
 	
 	
@@ -78,7 +99,7 @@ public class UserInput extends JPanel{
 		calculator = new JButton("Calculator");
 		graphIt = new JButton("Graph It!");
 		lengthModLabel = new JLabel("Meters");
-		lengthModCombo = new JComboBox<Object>(lengthModList);
+		lengthModCombo = new JComboBox<String>(lengthModList);
 		
 		add(lengthModCombo);
 		add(lengthModLabel);
@@ -123,22 +144,36 @@ public class UserInput extends JPanel{
 		calculator.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				
+				calculatorFrame = new JFrame();
+				calculatorFrame.setTitle("Calculator");
+				
+				//set some defaults
+				calculatorFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+				
+				calculatorFrame.setPreferredSize(new Dimension(400, 200));
+				calculatorFrame.add(theCalculator);
+				
+				calculatorFrame.pack();
+				calculatorFrame.setVisible(true);
+				
+				
 			}
 		});
 		
-		setPreferredSize(new Dimension(800, 100));
+		setPreferredSize(new Dimension(400, 50));
 	}
 	
 	/*
-	 * method to collect user data and set variables based on that data.
+	 * method to collect user data and set variables based on that data. should probably be moved to it's own class
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void getChargeData(){
 		numberOfCharges = Integer.parseInt(getNumberOfCharges.getText());
+		DefaultValues.allocatePointChargeArray(numberOfCharges);
 		chargesToCalc = new PointCharge[numberOfCharges];
 		mapper = new CustomMapper(DefaultValues.getCircOrRect()); 
 		chargeDataFrame = new JFrame();
-		chargeDataFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+		chargeDataFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		JPanel chargeDataPanel = new JPanel();
 		chargeDataFrame.setTitle("Data For Charge #: " + (1+okButtonPushes));
 		JLabel chargeLabel = new JLabel("Charge");
@@ -196,7 +231,9 @@ public class UserInput extends JPanel{
 							if(okButtonPushes == numberOfCharges){
 								confirm = JOptionPane.showConfirmDialog(null, "You have entered " + okButtonPushes + " charges. Press OK to confirm. \nPress Cancel to re-enter the charges", null ,JOptionPane.OK_CANCEL_OPTION);
 								if(confirm == JOptionPane.OK_OPTION){
+									DefaultValues.setCurrentPointCharges(chargesToCalc);
 									ElectroStaticUIContainer.removeGraphFromdisplayPanel();
+									theCalculator = new CalculatorPanel();
 									calcVec = new VectorCalculator(mapper);
 									volts = new VoltageAtPoint(mapper.getFieldPoints());
 									manGraph = new ManualPolygons(mapper);
@@ -204,9 +241,11 @@ public class UserInput extends JPanel{
 									drawVecs = new DrawElectricFieldLines(mapper);
 									ElectroStaticUIContainer.addGraphToDisplayPanel(chart);
 									ElectroStaticUIContainer.addVectorGraphToDisplayPanel(drawVecs.getChart());
+									setVectorChartToSave();
 									rotateIt = new ChartMouseController(chart);
 									okButtonPushes = 0;
-									chargeDataFrame.toBack();
+									chargeDataFrame.removeAll();
+									chargeDataFrame.dispose();
 								}
 								else if(confirm == JOptionPane.CANCEL_OPTION)
 									okButtonPushes = 0;
@@ -242,8 +281,11 @@ public class UserInput extends JPanel{
 	}
 	*/
 	
+	public void setVectorChartToSave(){
+		DefaultValues.setChartToSave(drawVecs.getChart());
+	}
 	
-	public static PointCharge[] getChargesToCalculate(){
+	public PointCharge[] getChargesToCalculate(){
 		return chargesToCalc;
 	}
 	

@@ -4,6 +4,25 @@ import java.util.Scanner;
 
 public class PointCharge extends javax.vecmath.Point3d {
 
+	/*
+	 * Copyright 2012 Shaun Sharpton
+	 * 
+	 * This file is part of "Dr Duncan's Electrostatic Charge modeler"!
+	 * 
+	 * 
+	 *   "Dr Duncan's Electrostatic Charge modeler" is free software: you can redistribute it and/or modify
+	 *   it under the terms of the GNU General Public License as published by
+	 *   the Free Software Foundation, either version 3 of the License, or
+	 *   (at your option) any later version.
+	 *   
+	 *   "Dr Duncan's Electrostatic Charge modeler" is distributed in the hope that it will be useful,
+	 *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+	 *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	 *   GNU General Public License for more details.
+	 *   
+	 *   You should have received a copy of the GNU General Public License
+	 *   along with "Dr Duncan's Electrostatic Charge modeler".  If not, see <http://www.gnu.org/licenses/>.
+	 */
 	
 	
 	/*
@@ -24,7 +43,9 @@ public class PointCharge extends javax.vecmath.Point3d {
 	private double chargeModifier = DefaultValues.getChargeMod();
 	
 	
-	
+	/*
+	 * constructors, follow the convention of Tuple3d
+	 */
 	public PointCharge(PointCharge aCharge){//constructor that clones another charge
 		this.x = aCharge.x;
 		this.y = aCharge.y;
@@ -63,12 +84,15 @@ public class PointCharge extends javax.vecmath.Point3d {
 		charge = chargeModifier*theCharge;
 		id = numberOfPointCharges++;
 	}
+	/*
+	 * end constructors
+	 */
 	
 	
 	public double voltageFromThisCharge(FieldPoint fPoint){
 		
 		/*
-		 * calculates voltage based on distance and is using the length mod...
+		 * this method calculates voltage based on distance and is using the length mod...
 		 */
 		
 		volHere = (this.charge/(this.distance(fPoint)*DefaultValues.getLengthMod()));
@@ -101,10 +125,17 @@ public class PointCharge extends javax.vecmath.Point3d {
 		return "X: " + x + " Y: "+ y + " Z: " + z + " Charge: " + charge;
 	}
 	
+	/*
+	 * calculate one charge (Q*Q) for force calculations, only used for one charge and another, not used in field point calculations....
+	 */
 	public double absValQ1Q2(PointCharge q2){//calculates the absval of this charge times another charge
 		resultOfQ1Q2 = (Math.abs(charge)*Math.abs(q2.getCharge()));
 		return resultOfQ1Q2;
 	}
+	
+	/*
+	 * getters and setters
+	 */
 	
 	public int getTotalCharges(){
 		return numberOfPointCharges;

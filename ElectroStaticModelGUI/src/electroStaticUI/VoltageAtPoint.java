@@ -1,7 +1,28 @@
 package electroStaticUI;
 
 import java.util.ArrayList;
-import java.util.Iterator;
+
+
+/*
+ * Copyright 2012 Shaun Sharpton
+ * 
+ * This file is part of "Dr Duncan's Electrostatic Charge modeler"!
+ * 
+ * 
+ *   "Dr Duncan's Electrostatic Charge modeler" is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *   
+ *   "Dr Duncan's Electrostatic Charge modeler" is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *   
+ *   You should have received a copy of the GNU General Public License
+ *   along with "Dr Duncan's Electrostatic Charge modeler".  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 
 public class VoltageAtPoint {
 	
@@ -11,7 +32,6 @@ public class VoltageAtPoint {
 	 * These methods require that the electric force vectors to each field point be calculated. This is built into
 	 */
 		
-	private PointCharge[] charges;
 	private double voltageHere = 0;
 	private FieldPoint thisPoint;
 	
@@ -21,14 +41,13 @@ public class VoltageAtPoint {
 		 */
 	public VoltageAtPoint(FieldPoint point){
 		thisPoint = point;
-		getSetUp();
 		point.setVoltageAtThisPoint(findVoltage());
+		point.setZAsVoltage(voltageHere);
 	}
 	
 	public VoltageAtPoint(ArrayList<FieldPoint> mappedPoints){
 		for(int i=0; i<mappedPoints.size(); i++){
 			thisPoint = mappedPoints.get(i);
-			getSetUp();
 			mappedPoints.get(i).setVoltageAtThisPoint(findVoltage());
 			mappedPoints.get(i).setZAsVoltage(voltageHere);
 			voltageHere = 0;
@@ -38,7 +57,6 @@ public class VoltageAtPoint {
 	public VoltageAtPoint(FieldPoint[] mappedPoints){
 		for(int i=0; i<mappedPoints.length; i++){
 			thisPoint = mappedPoints[i]; //load the point in the array into the calculator
-			getSetUp();
 			mappedPoints[i].setVoltageAtThisPoint(findVoltage()); //set the variable in the FieldPoint to the correct voltage
 			mappedPoints[i].setZAsVoltage(voltageHere);
 			//System.out.println("The Z value is now " + voltageHere + ".");
@@ -47,17 +65,11 @@ public class VoltageAtPoint {
 		}
 	}
 	
-	private void getSetUp(){
-		charges = new PointCharge[UserInput.getChargesToCalculate().length];
-		for(int j=0; j<charges.length; j++)
-				charges[j] = new PointCharge(thisPoint.getVectorsToThisPoint().get(j).getPointQ1());
-	}
 	
-	
-	//calculate the voltage usign the method within the pointCharge class.......
+	//calculate the voltage using the method within the pointCharge class.......
 	private double findVoltage(){
-		for(int i=0; i<charges.length; i++)
-			voltageHere += (charges[i].voltageFromThisCharge(thisPoint));
+		for(int i=0; i<DefaultValues.getCurrentPointCharges().length; i++)
+			voltageHere += (DefaultValues.getCurrentPointCharges()[i].voltageFromThisCharge(thisPoint));
 		//System.out.println("The voltage at this point is " + voltageHere + ".");
 		return voltageHere;
 	}

@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.io.IOException;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -28,9 +29,27 @@ import org.jzy3d.chart.Chart;
 
 public class ElectroStaticUIContainer extends JFrame{
 	
-	/**
+	/*
+	 * Copyright 2012 Shaun Sharpton
 	 * 
+	 * This file is part of "Dr Duncan's Electrostatic Charge modeler"!
+	 * 
+	 * 
+	 *   "Dr Duncan's Electrostatic Charge modeler" is free software: you can redistribute it and/or modify
+	 *   it under the terms of the GNU General Public License as published by
+	 *   the Free Software Foundation, either version 3 of the License, or
+	 *   (at your option) any later version.
+	 *   
+	 *   "Dr Duncan's Electrostatic Charge modeler" is distributed in the hope that it will be useful,
+	 *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+	 *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	 *   GNU General Public License for more details.
+	 *   
+	 *   You should have received a copy of the GNU General Public License
+	 *   along with "Dr Duncan's Electrostatic Charge modeler".  If not, see <http://www.gnu.org/licenses/>.
 	 */
+	
+	
 	private static final long serialVersionUID = 1L;
 	//menu components
 	private JMenuBar menuBar;
@@ -41,7 +60,6 @@ public class ElectroStaticUIContainer extends JFrame{
 	private JMenu export;
 	private JMenuItem exitItem;
 	private JMenuItem setGraphRangeAndSteps;
-	private JMenuItem asymptoteReadableFile;
 	private JMenuItem newElectricFieldLines;
 	private JMenuItem newElectricPotential;
 	private JMenuItem d2d;
@@ -54,7 +72,7 @@ public class ElectroStaticUIContainer extends JFrame{
 	private JPanel container;
 	private static JTabbedPane displayPanel;
 	private JFileChooser fChooser = new JFileChooser();
-	private String saveAsName = "NoSavedFileYet";
+	private String saveAsName = "chart";
 	private File saveAsFile = new File(saveAsName);
 	private String newFileName = "NoUserInputYet";
 	private File makeNewFile = new File(newFileName);
@@ -103,9 +121,9 @@ public class ElectroStaticUIContainer extends JFrame{
 		container.setVisible(true);
 		
 		//pack and display the window
+		setDefaultLookAndFeelDecorated(true);
 		getContentPane().add(container);
 		setVisible(true);
-		
 	}
 	
 
@@ -119,32 +137,6 @@ public class ElectroStaticUIContainer extends JFrame{
 		eFieldDisplay = new ChartPanel(vectorChart);
 		displayPanel.addTab("Vector Plot", eFieldDisplay);
 		
-	}
-	
-	public static void setVoltageChartVisible(){
-		voltageChartPanel.setVisible(true);
-	}
-	
-	public static void setVoltageChartInvisible(){
-		voltageChartPanel.setVisible(false);
-	}
-	
-	public static void setVectorPlotVisible(){
-		eFieldDisplay.setVisible(true);
-		
-	}
-	
-	public static void setVectorPlotInvisible(){
-		eFieldDisplay.setVisible(false);
-	}
-	
-	public static void addVectorGraphToDisplayPanel(ChartPanel theVectorPlot){
-		eFieldDisplay = theVectorPlot;
-		displayPanel.add(eFieldDisplay);
-		displayPanel.removeAll();
-		eFieldDisplay.setVisible(true);
-		displayPanel.revalidate();
-		displayPanel.setVisible(true);
 	}
 	
 	
@@ -180,29 +172,22 @@ public class ElectroStaticUIContainer extends JFrame{
 		//create Exit menu item
 		exitItem = new JMenuItem("Exit");
 		exitItem.setMnemonic(KeyEvent.VK_X);
-		exitItem.addActionListener(new ExitListener());
+		exitItem.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				System.exit(0);
+			}
+		});
 		
-		//new file
-		newFile = new JMenu("New");
-		newFile.setMnemonic(KeyEvent.VK_N);
-		newFile.addActionListener(new NewFileListener());
-		//new file menu items
-		//electric field lines
-		newElectricFieldLines = new JMenuItem("Electric Field Lines");
-		newElectricFieldLines.setMnemonic(KeyEvent.VK_L);
-		newElectricFieldLines.addActionListener(new NewFileListener());
-		//electric potential or voltage
-		newElectricPotential = new JMenuItem("Electric Potenial");
-		newElectricPotential.setMnemonic(KeyEvent.VK_V);
-		newElectricPotential.addActionListener(new NewFileListener());
-		//add the menu items to new file menu
-		newFile.add(newElectricFieldLines);
-		newFile.add(newElectricPotential);
 		
 		//open
 		open = new JMenuItem("Open");
 		open.setMnemonic(KeyEvent.VK_P);
-		open.addActionListener(new OpenFileListener());
+		open.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				JFileChooser fChooser = new JFileChooser();
+				int status = fChooser.showSaveDialog(null);
+			}
+		});
 		
 		//close
 		close = new JMenuItem("Close");
@@ -211,19 +196,59 @@ public class ElectroStaticUIContainer extends JFrame{
 		//save
 		save = new JMenuItem("Save");
 		save.setMnemonic(KeyEvent.VK_S);
-		save.addActionListener(new SaveListener());
+		save.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				JFileChooser fChooser = new JFileChooser();
+				int status = fChooser.showSaveDialog(null);
+				if (status == JFileChooser.APPROVE_OPTION){
+					try {
+						System.out.println("Height: " + displayPanel.getWidth());
+						System.out.println("Width: " + displayPanel.getHeight());
+						saveAsName = fChooser.getSelectedFile().getCanonicalPath();
+						Save.saveChartToSVG(DefaultValues.getChartToSave(), saveAsName, displayPanel.getWidth(), displayPanel.getHeight());
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+					
+				
+			}
+		});
 		
 		//saveAs
 		saveAs = new JMenuItem("Save As");
 		saveAs.setMnemonic(KeyEvent.VK_A);
-		saveAs.addActionListener(new SaveAsListener());
+		saveAs.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				JFileChooser fChooser = new JFileChooser();
+				int status = fChooser.showSaveDialog(null);
+				if (status == JFileChooser.APPROVE_OPTION)
+					try {
+						System.out.println("Height: " + displayPanel.getWidth());
+						System.out.println("Width: " + displayPanel.getHeight());
+						saveAsName = fChooser.getSelectedFile().getCanonicalPath();
+						System.out.println(saveAsName);
+						Save.saveChartToSVG(DefaultValues.getChartToSave(), saveAsName, displayPanel.getWidth(), displayPanel.getHeight());
+					} catch (IOException e2) {
+						// TODO Auto-generated catch block
+						e2.printStackTrace();
+					}
+				try {
+					Save.saveChartToSVG(UserInput.getElectricFieldChart(), saveAsName, displayPanel.getWidth(), displayPanel.getHeight());
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
 		
 		//JMenu object for file menu
 		fileMenu = new JMenu("File");
 		fileMenu.setMnemonic(KeyEvent.VK_F);
 		
-		fileMenu.add(newFile);
-		fileMenu.add(open);
+		//fileMenu.add(newFile);
+		//fileMenu.add(open);
 		fileMenu.add(close);
 		fileMenu.add(save);
 		fileMenu.add(saveAs);
@@ -231,21 +256,24 @@ public class ElectroStaticUIContainer extends JFrame{
 		}
 	
 	private void buildOptionMenu(){
-		
-		//create Dimension menu
-		dimension = new JMenu("Dimension");
-		dimension.setMnemonic(KeyEvent.VK_D);
-		//create 2d menu item
-		d2d = new JMenuItem("2D");
-		d2d.setMnemonic(KeyEvent.VK_2);
-		d2d.addActionListener(new OptionMenuListener());
-		//create 3d menu item
-		d3d = new JMenuItem("3D");
-		d3d.setMnemonic(KeyEvent.VK_3);
-		d3d.addActionListener(new OptionMenuListener());
-		//add dimension choices to it
-		dimension.add(d2d);
-		dimension.add(d3d);
+		/*
+		 * since both graphs are displayed in a JTAbbedPane now there is no need for this...
+		 *	//create Dimension menu
+		 *	dimension = new JMenu("Dimension");
+		 *	dimension.setMnemonic(KeyEvent.VK_D);
+		 *	//create 2d menu item
+		 *	d2d = new JMenuItem("2D");
+		 *	d2d.setMnemonic(KeyEvent.VK_2);
+		 *	d2d.addActionListener(new OptionMenuListener());
+		 *	//create 3d menu item
+		 *	d3d = new JMenuItem("3D");
+		 *	d3d.setMnemonic(KeyEvent.VK_3);
+		 *	d3d.addActionListener(new OptionMenuListener());
+		 *	//add dimension choices to it
+		 *	//dimension.add(d2d);
+		 *	//dimension.add(d3d);
+		 * 
+		 */
 		
 		//create Graph menu item
 		graphOptions = new JMenu("Graph");
@@ -256,9 +284,9 @@ public class ElectroStaticUIContainer extends JFrame{
 		setGraphRangeAndSteps.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				rangeAndStepsSetter();
-				
 			}
 		});
+		
 		//add choices to Graph menu
 		graphOptions.add(setGraphRangeAndSteps);
 		
@@ -267,7 +295,7 @@ public class ElectroStaticUIContainer extends JFrame{
 		optionMenu.setMnemonic(KeyEvent.VK_O);
 		
 		//add the items to it
-		optionMenu.add(dimension);
+		//optionMenu.add(dimension);
 		optionMenu.add(graphOptions);
 	}
 	
@@ -367,56 +395,5 @@ private void rangeAndStepsSetter(){
 	 */
 	
 	//handles exit from file menu event
-	private class ExitListener implements ActionListener {
-		public void actionPerformed(ActionEvent e){
-			System.exit(0);
-		}
-	}
 	
-	private class GraphOptionListener implements ActionListener{
-		public void actionPerformed(ActionEvent e){
-			
-		}
-	}
-
-	
-	private class OptionMenuListener implements ActionListener{
-		public void actionPerformed(ActionEvent e){
-			
-		}
-	}
-	
-	private class SaveListener implements ActionListener{
-		public void actionPerformed(ActionEvent e){
-			//code to save the working graph as an object..we will make it a .pes (physics electro statics)
-		}
-	}
-	
-	private class SaveAsListener implements ActionListener{
-		public void actionPerformed(ActionEvent e){
-			JFileChooser fChooser = new JFileChooser();
-			int status = fChooser.showSaveDialog(null);
-			if (status == JFileChooser.APPROVE_OPTION)
-				saveAsName = fChooser.getSelectedFile().getName();
-			//saveAsFile = code goes here
-		}
-	}
-	
-	private class NewFileListener implements ActionListener{
-		public void actionPerformed(ActionEvent e){
-			JFileChooser fChooser = new JFileChooser();
-			int status = fChooser.showOpenDialog(null);
-			if (status == JFileChooser.APPROVE_OPTION)
-				saveAsName = fChooser.getSelectedFile().getName();
-		}
-	}
-	
-	private class OpenFileListener implements ActionListener{
-		public void actionPerformed(ActionEvent e){
-			JFileChooser fChooser = new JFileChooser();
-			int status = fChooser.showOpenDialog(null);
-			if (status == JFileChooser.APPROVE_OPTION)
-				saveAsName = fChooser.getSelectedFile().getName();
-		}
-	}
 }

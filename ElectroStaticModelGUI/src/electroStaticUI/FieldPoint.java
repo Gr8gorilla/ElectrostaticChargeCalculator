@@ -6,6 +6,27 @@ import javax.vecmath.*;
 
 public class FieldPoint extends Point3d {
 	
+	/*
+	 * Copyright 2012 Shaun Sharpton
+	 * 
+	 * This file is part of "Dr Duncan's Electrostatic Charge modeler"!
+	 * 
+	 * 
+	 *   "Dr Duncan's Electrostatic Charge modeler" is free software: you can redistribute it and/or modify
+	 *   it under the terms of the GNU General Public License as published by
+	 *   the Free Software Foundation, either version 3 of the License, or
+	 *   (at your option) any later version.
+	 *   
+	 *   "Dr Duncan's Electrostatic Charge modeler" is distributed in the hope that it will be useful,
+	 *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+	 *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	 *   GNU General Public License for more details.
+	 *   
+	 *   You should have received a copy of the GNU General Public License
+	 *   along with "Dr Duncan's Electrostatic Charge modeler".  If not, see <http://www.gnu.org/licenses/>.
+	 */
+	
+	
 	/**
 	 * class to represent a point in space where electric force and electric potential of a charge distribution can be measured
 	 */
@@ -20,7 +41,7 @@ public class FieldPoint extends Point3d {
 	public FieldPoint(double x, double y, double z){
 		super(x, y, z);
 		vectorsToThisPoint = new ArrayList<ElectricForceVector>();
-		vectorsToThisPoint.ensureCapacity(UserInput.getChargesToCalculate().length);
+		vectorsToThisPoint.ensureCapacity(DefaultValues.getCurrentPointCharges().length);
 		totalVector = new ElectricForceVector();
 		id = numberOfFieldPoints++;
 	}
@@ -28,7 +49,7 @@ public class FieldPoint extends Point3d {
 	public FieldPoint(){
 		super(0,0,0);
 		vectorsToThisPoint = new ArrayList<ElectricForceVector>();
-		vectorsToThisPoint.ensureCapacity(UserInput.getChargesToCalculate().length);
+		vectorsToThisPoint.ensureCapacity(DefaultValues.getCurrentPointCharges().length);
 		totalVector = new ElectricForceVector();
 		id = numberOfFieldPoints++;
 		}
