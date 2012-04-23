@@ -20,6 +20,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.jfree.chart.ChartFrame;
 import org.jfree.chart.ChartPanel;
@@ -57,7 +58,6 @@ public class ElectroStaticUIContainer extends JFrame{
 	private JMenu optionMenu;
 	private JMenu dimension;
 	private JMenu graphOptions;
-	private JMenu export;
 	private JMenuItem exitItem;
 	private JMenuItem setGraphRangeAndSteps;
 	private JMenuItem newElectricFieldLines;
@@ -67,6 +67,7 @@ public class ElectroStaticUIContainer extends JFrame{
 	private JMenuItem newFile;
 	private JMenuItem open;
 	private JMenuItem close;
+	private JMenuItem export;
 	private JMenuItem save;
 	private JMenuItem saveAs;
 	private JPanel container;
@@ -85,13 +86,13 @@ public class ElectroStaticUIContainer extends JFrame{
 	private JTextField currentUpperField;
 	private JTextField currentRangeField;
 	private static Chart chart = new Chart();
-	private static JFreeChart electricFieldChart;
 	private static ChartPanel eFieldDisplay;
 	private double lb;
 	private double ub;
 	private int step;
 	private int safety = 0;
 	private static JPanel voltageChartPanel;
+	
 	
 	//constructor
 	public ElectroStaticUIContainer(){
@@ -128,7 +129,7 @@ public class ElectroStaticUIContainer extends JFrame{
 	
 
 	//method to paint the chart onto the display panel
-	public static void addGraphToDisplayPanel(Chart threeDChart){
+	public static void add3DGraphToDisplayPanel(Chart threeDChart){
 		chart = threeDChart;
 		displayPanel.addTab("Voltage", (Component) threeDChart.getCanvas());                               
 	}
@@ -136,6 +137,8 @@ public class ElectroStaticUIContainer extends JFrame{
 	public static void addVectorGraphToDisplayPanel(JFreeChart vectorChart){
 		eFieldDisplay = new ChartPanel(vectorChart);
 		displayPanel.addTab("Vector Plot", eFieldDisplay);
+		eFieldDisplay.setMouseWheelEnabled(true);
+		eFieldDisplay.setMouseZoomable(true);
 		
 	}
 	
@@ -193,6 +196,43 @@ public class ElectroStaticUIContainer extends JFrame{
 		close = new JMenuItem("Close");
 		close.setMnemonic(KeyEvent.VK_C);
 		
+		//export
+		export = new JMenuItem("Export");
+		export.setMnemonic(KeyEvent.VK_E);
+		export.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				JFileChooser fChooser = new JFileChooser();
+				fChooser.setMultiSelectionEnabled(false);
+				fChooser.setAcceptAllFileFilterUsed(false);
+				FileNameExtensionFilter svgFilter = new FileNameExtensionFilter("Save Vector Plot(svg)", ".svg");
+				FileNameExtensionFilter pngFilter = new FileNameExtensionFilter("Save Voltage Surface Plot(png)", ".png");
+				fChooser.addChoosableFileFilter(svgFilter);
+				fChooser.addChoosableFileFilter(pngFilter);
+				fChooser.setFileFilter(svgFilter);
+				int status = fChooser.showSaveDialog(rootPane);
+				if(status == JFileChooser.APPROVE_OPTION){
+					if(fChooser.getFileFilter() == svgFilter){
+						try {
+							saveAsName = fChooser.getSelectedFile().getCanonicalPath();
+							Save.saveChartToSVG(DefaultValues.getChartToSave(), saveAsName, displayPanel.getWidth(), displayPanel.getHeight());
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					}
+					else if(fChooser.getFileFilter() == pngFilter){
+						try {
+							saveAsName = fChooser.getSelectedFile().getCanonicalPath();
+							Save.saveChart3dToPNG(DefaultValues.get3dChartToSave(), saveAsName);
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					}
+				}
+			}
+		});
+		
 		//save
 		save = new JMenuItem("Save");
 		save.setMnemonic(KeyEvent.VK_S);
@@ -249,9 +289,10 @@ public class ElectroStaticUIContainer extends JFrame{
 		
 		//fileMenu.add(newFile);
 		//fileMenu.add(open);
-		fileMenu.add(close);
-		fileMenu.add(save);
-		fileMenu.add(saveAs);
+		//fileMenu.add(close);
+		fileMenu.add(export);
+		//fileMenu.add(save);
+		//fileMenu.add(saveAs);
 		fileMenu.add(exitItem);
 		}
 	

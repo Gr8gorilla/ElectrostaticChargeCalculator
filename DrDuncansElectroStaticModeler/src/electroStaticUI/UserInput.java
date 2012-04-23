@@ -239,9 +239,10 @@ public class UserInput extends JPanel{
 									manGraph = new ManualPolygons(mapper);
 									chart = manGraph.delaunayBuild();
 									drawVecs = new DrawElectricFieldLines(mapper);
-									ElectroStaticUIContainer.addGraphToDisplayPanel(chart);
+									ElectroStaticUIContainer.add3DGraphToDisplayPanel(chart);
 									ElectroStaticUIContainer.addVectorGraphToDisplayPanel(drawVecs.getChart());
 									setVectorChartToSave();
+									setChart3dToSave();
 									rotateIt = new ChartMouseController(chart);
 									okButtonPushes = 0;
 									chargeDataFrame.removeAll();
@@ -280,6 +281,10 @@ public class UserInput extends JPanel{
 		}
 	}
 	*/
+	
+	public void setChart3dToSave(){
+		DefaultValues.set3dChartToSave(chart);
+	}
 	
 	public void setVectorChartToSave(){
 		DefaultValues.setChartToSave(drawVecs.getChart());

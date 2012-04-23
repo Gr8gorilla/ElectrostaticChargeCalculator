@@ -1,6 +1,7 @@
 package electroStaticUI;
 
 import org.jfree.chart.JFreeChart;
+import org.jzy3d.chart.Chart;
 
 /*
  * Copyright 2012 Shaun Sharpton
@@ -41,6 +42,16 @@ public class DefaultValues {
 	private static boolean input3d = false;//should be set with a menu
 	private static PointCharge[] currentPointCharges;
 	private static JFreeChart chartToSave;
+	private static Chart chart3dToSave;
+	
+	
+	public static void set3dChartToSave(Chart currentChart3d){
+		chart3dToSave = currentChart3d;
+	}
+	
+	public static Chart get3dChartToSave(){
+		return chart3dToSave;
+	}
 	
 	
 	public static void setChartToSave(JFreeChart currentChart){

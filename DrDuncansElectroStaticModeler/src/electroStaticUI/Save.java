@@ -2,8 +2,6 @@ package electroStaticUI;
 
 import java.awt.RenderingHints;
 import java.awt.geom.Rectangle2D;
-import java.io.IOException;
-import java.io.Writer;
 import java.io.*;
 
 import org.apache.batik.dom.GenericDOMImplementation;
@@ -11,6 +9,8 @@ import org.apache.batik.svggen.SVGGraphics2D;
 import org.apache.commons.io.IOUtils;
 import org.jfree.chart.ChartRenderingInfo;
 import org.jfree.chart.JFreeChart;
+import org.jzy3d.chart.Chart;
+import org.jzy3d.io.FileImage;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 
@@ -36,8 +36,6 @@ import org.w3c.dom.Document;
  */
 
 
-
-
 public class Save {
 	
 	/**
@@ -50,6 +48,9 @@ public class Save {
      * @param height Height of chart graphic.
      * @return Final file name used.
      * @throws IOException if failed.
+     * 
+     * To Do: Add a save/open method for saving a file native to this application. It should save the users current charge distribution 
+     * to be re-loaded at a later time.
      */
 	
 	
@@ -118,4 +119,27 @@ public class Save {
         return result;
     }//saveChartToSVG()
 
+    
+    public static final String saveChart3dToPNG(final Chart chart, String fileName){
+    	String result = null;
+    	
+    	
+    	//give chart a default name if user doesn't enter one
+    	if (chart != null) 
+            if (fileName == null) 
+                fileName = "3DChart";
+                
+            result = fileName + ".png";
+    	
+    	
+    	try {
+			FileImage.savePNG(chart.screenshot(), result);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
+    	return result;
+    }
+    
 }

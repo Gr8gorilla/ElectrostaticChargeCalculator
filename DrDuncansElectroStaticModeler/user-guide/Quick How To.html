@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html><head>
+<meta content="text/html; charset=ISO-8859-1" http-equiv="content-type"><title>Quick Start Guide</title>
+
+<meta content="shaun sharpton" name="author"><meta content="Quick Start" name="description"></head>
+<body>
+<div style="text-align: center;">
+<h1>Quick Start Guide</h1><div style="text-align: left;"><div style="text-align: center;"><h2>System Setup</h2><div style="text-align: left;">&nbsp;&nbsp;&nbsp; 1. Make sure that you have JRE 7 installed from oracles website - <a href="http://www.oracle.com/technetwork/java/javase/downloads/jre-7u3-download-1501631.html">Here</a></div></div><div style="text-align: center;"><h2>Using The Software</h2></div><ol><li>Choose
+the number of charges that will be in the distribution you wish to
+analyze. Enter into the box at the top of the screen, click enter
+button.&nbsp;</li><li>Next you will enter the value of the charges in
+Coulombs, there is a drop-down box that allows you to choose a metric
+prefix for your charge strength, and the x,y locations of your
+charges.&nbsp;</li><dl><dd><span style="font-weight: bold;">Note:</span> <span style="font-style: italic;">The
+range of the graph defaults to -2.5 to 2.5, This range is a bounding
+box inside of which you can examine the interactions of the charges.
+The x,y location of your charges should be entered as they relate to
+the origin of the bounding box.</span></dd></dl><li>When you confirm
+the charges that you entered two graphs will be generated. The first
+will be a 3d surface plot of the electric potential. The second tab
+will be the 2d vector field that represents the electric field lines.</li><li>Plots can be exported. The 3d-Surface plot will be exported as a <span style="color: red;">.</span><span style="font-style: italic;"><span style="background-color: white; color: red;">png</span>.</span> The Vector plot of the E-Field will be exported as <span style="color: red;"><span style="color: red;">.</span>svg</span>. &nbsp;</li><dl><dd><span style="font-weight: bold;">Note: </span><span style="font-style: italic;">To
+export the 3d-Surface plot you choose png from the file type list, to
+export the vector plot you choose svg as the file type. If you do not
+enter a file name, the chart will be given a default name.</span></dd></dl><li>To
+change the range of your bounding box, click Options menu, Graph,
+range/steps. In the window that opens you will see the current range
+and steps and empty fields for entering new ones. Enter the new
+range/steps that you wish to use, click Ok. If you leave a field blank
+it will use the last value for that field. You will also get a warning
+that you have entered some invalid data and that the field has been
+reset to its original settings.&nbsp;</li><dl><dd><span style="font-weight: bold;">Note:</span> <span style="font-style: italic;">Changing
+the steps above 5 can give some strange results. This is likely a
+result of how the points are generated. Feel free to experiment with
+manipulating the range and steps. The larger your range, the farther
+out the view will be. Sometimes setting the steps too large will result
+in no graph at all being generated or sometimes a black square. This
+will be worked on in future revisions.&nbsp;</span></dd></dl><li>The 3d surface plot can be viewed from different angles by left-clicking the graph and dragging with the mouse. The
+2d vector plot can be zoomed with the mouse wheel. Zooming out beyond
+the bounding box will show nothing as of right now, in the future this
+will be edited to show the charge distribution as a point charge if the
+distance away is great. </li></ol><dl style="text-align: center;"><dd>Java VM Concerns</dd></dl><ol><dl><dt>If
+you are entering a large number of charges you should increase the
+amount of memory allocated to the JVM. You can do this by opening
+a command line and typing java -Xmx512m appName where 512 is how much
+memory and m can be m or k for mega or kilo bytes. You can also use
+java -Xms128m to set the minimum heap size. </dt></dl></ol></div><h2><a href="StartHere.html">Home</a></h2>
+</div>
+</body></html>
